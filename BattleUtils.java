@@ -1,7 +1,11 @@
 import java.util.Random;
 
-public class Fighter extends BattleUtils{
+public class BattleUtils extends Fighter{
     static Random rand = new Random();
+
+    public BattleUtils(String name, int HP, int attackPower){
+        super(name, HP , attackPower);
+    }
 
     static int strikeAttack(){
         return rand.nextInt(10) + 1;
@@ -17,11 +21,16 @@ public class Fighter extends BattleUtils{
         }
     }
 
-    static int strikeAttack(int attackPower, int choosenPlayer){
-        if (super.HP >= 0){
+    public void strikeAttack(Fighter enemy){
+        
+        if (enemy.getHP() <= 0){
             System.out.println("Player is already eliminated.");
-        }else {
-            super.damageTaken(attackPower);
+            return;
         }
+
+        int damage = strikeAttack(getAttackPower());
+        enemy.damageTaken(damage);
+
+        System.out.println(getName() + " receive " + damage + " damage from" + enemy.getName());
     }
 }

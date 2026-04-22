@@ -35,12 +35,12 @@ class Fighter{
     public int getAttackPower(){return attackPower;}
 
     // Methods
-    public int damageTaken(int attackDamage){
-        
-            if (HP < attackDamage){
-                HP = 0;
-            }else {
-                HP -= attackDamage;
-            }
+    public void damageTaken(int attackDamage){
+    
+        if (HP < attackDamage){
+             HP = 0;
+        }else {
+             HP -= attackDamage;
+        }
     }
 }
