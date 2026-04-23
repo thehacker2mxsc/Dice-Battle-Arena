@@ -5,11 +5,13 @@ class Fighter{
     private String name;
     private int HP;
     private int attackPower;
+    private int skillRage;
 
     public Fighter(String name, int HP, int attackPower){
         this.name = name;
         this.HP = HP;
         this.attackPower = attackPower;
+        skillRage = 0;
     }
 
     //Setters
@@ -33,14 +35,19 @@ class Fighter{
     public String getName(){return  name;}
     public int getHP(){return HP;}
     public int getAttackPower(){return attackPower;}
+    public int getSkillRage(){return skillRage;}
 
     // Methods
-    public void damageTaken(int attackDamage){
+    public void damageReceive(int attackDamage){
     
         if (HP < attackDamage){
-             HP = 0;
+            HP = 0;
         }else {
-             HP -= attackDamage;
+            HP -= attackDamage;
         }
+    }
+
+    public void damageTaken(int damageTaken){
+        skillRage += damageTaken;
     }
 }
