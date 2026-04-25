@@ -4,7 +4,10 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
+        // Create an array of fighters using ArrayList
         ArrayList<Fighter> fighters = new ArrayList<>();
+        
+        // Create a scanner function for the users input
         Scanner scan = new Scanner(System.in);
 
         // Create fighters
@@ -14,56 +17,82 @@ public class Main {
         fighters.add(new Fighter("Reaper", 250, 20));
         fighters.add(new Fighter("Smasher", 400, 10));
 
-        // Turn-based simple battle simulation
-
+        // Welcom message
         System.out.println("Battle Start!");
 
-        boolean thereIsWinner = false; 
-        boolean specialSkill = false;
+        // Initialize players turn as first fighter
         int playersTurn = 0;
+        ArrayList<String> opponent = new ArrayList<>();
 
+        // Create a boolean variable that determine for winner, skill and player's turn
+        boolean thereIsWinner = false; 
+
+        // Create a loop that runs if there is still no winner
         while(!thereIsWinner) {
-            int eliminatedPlayer = 0;
 
+            // Initialize the skill to false
+            boolean specialSkill = false;
+
+            // Create a variable that counts the players eliminated
+            int eliminatedPlayerCount = 0;
+
+            // Create a loop that checks the player that has 0 or below HP left
             for (Fighter f : fighters) {
                 if (f.getHP() <= 0) {
-                    eliminatedPlayer++;
+                    eliminatedPlayerCount++;// Adds count to players with 0 or below HP left
+                    playersTurn++;
+                }else if(!f.getName().equals(fighters.get(playersTurn).getName())){
+                    opponent.add(f.getName());
                 }
             }
 
-            if (eliminatedPlayer == (fighters.size() - 1)) {
+            // Check wether if the player with zero and below HP reaches players count minus one 
+            if (eliminatedPlayerCount == (fighters.size() - 1)) {
                 thereIsWinner = true;
+                break;
             }
 
-            if (playersTurn >= fighters.size()){
+            // It resets if all player already made and attack minus the eliminated player
+            if (playersTurn >= fighters.size() - eliminatedPlayerCount){
                 playersTurn = 0;
             }
 
-            System.out.println("Choose Player to Attack: ");
 
+            // Get the stats of the current player to attack
             Fighter current = fighters.get(playersTurn);
-            int i = 1;
-            for (Fighter f : fighters){
+            // Use for displaying purposes to player whom you will attack
+            int printIndex = 1;
 
-                if (!f.getName().equals(current.getName()) && f.getHP() > 0){
-                    System.out.println(i + ". " + f.getName() + " : " + f.getHP());
-                    i++;
+            // Show player status
+            fighters.get(playersTurn).showStats();
+
+            int opponentIndex = 0;
+            
+            // Display players choices to who you will attack
+            System.out.println("Choose Player to Attack: ");
+            for (Fighter f : fighters){
+                    if (f.getName().equals(opponent.get(opponentIndex))){
+                        System.out.println(printIndex + ". " + f.getName() + " : " + f.getHP());
+                        printIndex++;
+                        opponentIndex++;
                 }
+                    
             }
 
             System.out.print("Enter opponent name you will attack: ");
 
-            String  choosenOpponent = scan.nextLine();
+            int  choosenOpponent = scan.nextInt();
+            /*
             int choosenOpponentIndex = -1;
-            int index = 0;
+            int findOpponentIndex = 0;
             for (Fighter f : fighters){
-                if (choosenOpponent.equals(f.getName())){
-                    choosenOpponentIndex = index;
+                if (choosenOpponent.toLowerCase().equals(f.getName().toLowerCase())){
+                    choosenOpponentIndex = findOpponentIndex;
                 }
-                index++;
-            }
+                findOpponentIndex++;
+            }*/
             
-            if (choosenOpponentIndex != -1){
+            if (choosenOpponent >= 0 &&  choosenOpponent <= opponent.size() - 1){
                 if (fighters.get(playersTurn).getSkillRage() >= 75){
                 char skill;
 
@@ -72,52 +101,28 @@ public class Main {
 
                 if (Character.toLowerCase(skill) == 'y') {
                     specialSkill = true;
+                }else if (Character.toLowerCase(skill) == 'n'){
+                    System.out.println("You haven't used your skill.");
+                }else{
+                    System.out.println("Invalid input.\nSkill not used.");
                 }
+
                 }else {
                     System.out.println("Skill not yet available.");
                 }
 
                 int damage1 = BattleUtils.strikeAttack(
                 fighters.get(playersTurn),
-                fighters.get(choosenOpponentIndex),
-                fighters.get(0).getAttackPower(),
+                fighters.get(choosenOpponent),
+                fighters.get(playersTurn).getAttackPower(),
                 specialSkill);
-
 
                 System.out.println("" + damage1);
             }else {
                 System.out.println("Invalid Attack!");
             }
 
-            
-
-            specialSkill = false;
             playersTurn++;
         }
     }
 }
-
-            /*
-            fighters.get(1).damageReceive(damage1);
-
-            System.out.println(fighters.get(0).getName() + " dealt " + damage1 + " damage to " + fighters.get(1).getName());
-            System.out.println(fighters.get(1).getName() + " HP: " + fighters.get(1).getHP());
-
-            if (fighters.get(1).getHP() <= 0) {
-                System.out.println(fighters.get(1).getName() + " is eliminated!");
-                break;
-            }
-
-            // Player 2 attack
-            int damage2 = BattleUtils.strikeAttack(fighters.get(1).getAttackPower());
-            fighters.get(0).damageTaken(damage2);
-
-            System.out.println(fighters.get(1).getName() + " dealt " + damage2 + " damage to " + fighters.get(0).getName());
-            System.out.println(fighters.get(0).getName() + " HP: " + fighters.get(0).getHP());
-
-            if (fighters.get(0).getHP() <= 0) {
-                System.out.println(fighters.get(0).getName() + " is eliminated!");
-                break;
-            }
-
-            System.out.println("------------------------");*/

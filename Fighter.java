@@ -50,4 +50,14 @@ class Fighter{
     public void damageTaken(int damageTaken){
         skillRage += damageTaken;
     }
+
+    public int resetDamageTaken(){
+        return skillRage = 0;
+    }
+
+    public void showStats(){
+        System.out.println("Player's Turn: " + name);
+        System.out.println("HP Left: " + HP);
+        System.out.println("Skill Rage: " + skillRage + "\n");
+    }
 }
