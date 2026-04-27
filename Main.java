@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,18 +18,19 @@ public class Main {
         fighters.add(new Fighter("Reaper", 250, 20));
         fighters.add(new Fighter("Smasher", 400, 10));
 
+
         // Welcom message
         System.out.println("Battle Start!");
 
         // Initialize players turn as first fighter
         int playersTurn = 0;
-        ArrayList<String> opponent = new ArrayList<>();
 
         // Create a boolean variable that determine for winner, skill and player's turn
         boolean thereIsWinner = false; 
 
         // Create a loop that runs if there is still no winner
         while(!thereIsWinner) {
+
 
             // Initialize the skill to false
             boolean specialSkill = false;
@@ -40,23 +42,25 @@ public class Main {
             for (Fighter f : fighters) {
                 if (f.getHP() <= 0) {
                     eliminatedPlayerCount++;// Adds count to players with 0 or below HP left
-                    playersTurn++;
-                }else if(!f.getName().equals(fighters.get(playersTurn).getName())){
-                    opponent.add(f.getName());
                 }
             }
+
+            //Recheck this code block---------------------
+            while (playersTurn < fighters.size() &&
+                fighters.get(playersTurn).getHP() <= 0) {
+                playersTurn++;
+            }
+
+            if (playersTurn >= fighters.size()) {
+                playersTurn = 0;
+            }
+            // Until here----------------------------------
 
             // Check wether if the player with zero and below HP reaches players count minus one 
             if (eliminatedPlayerCount == (fighters.size() - 1)) {
                 thereIsWinner = true;
                 break;
             }
-
-            // It resets if all player already made and attack minus the eliminated player
-            if (playersTurn >= fighters.size() - eliminatedPlayerCount){
-                playersTurn = 0;
-            }
-
 
             // Get the stats of the current player to attack
             Fighter current = fighters.get(playersTurn);
@@ -66,33 +70,41 @@ public class Main {
             // Show player status
             fighters.get(playersTurn).showStats();
 
-            int opponentIndex = 0;
+            ArrayList<String> opponentList= new ArrayList<>();
             
             // Display players choices to who you will attack
-            System.out.println("Choose Player to Attack: ");
+            System.out.println("List of Opponents: ");
             for (Fighter f : fighters){
-                    if (f.getName().equals(opponent.get(opponentIndex))){
+                    if (f.getHP() > 0 && !f.getName().equals(fighters.get(playersTurn).getName())){
                         System.out.println(printIndex + ". " + f.getName() + " : " + f.getHP());
                         printIndex++;
-                        opponentIndex++;
+                        opponentList.add(f.getName());
                 }
-                    
             }
+            System.out.println(playersTurn);
 
             System.out.print("Enter opponent name you will attack: ");
 
-            int  choosenOpponent = scan.nextInt();
-            /*
-            int choosenOpponentIndex = -1;
-            int findOpponentIndex = 0;
-            for (Fighter f : fighters){
-                if (choosenOpponent.toLowerCase().equals(f.getName().toLowerCase())){
-                    choosenOpponentIndex = findOpponentIndex;
+            int choosenOpponent;
+
+            while(true){
+                  choosenOpponent = scan.nextInt() - 1;
+
+                if (choosenOpponent >= 0 && choosenOpponent < opponentList.size()){
+                    break;
+                }else{
+                    System.out.println("Enter values from 1-" + (opponentList.size()));
                 }
-                findOpponentIndex++;
-            }*/
+            }
+            int choosenOpponentIndex = 0;
+
+            for (int i = 0; i < fighters.size() ; i++){
+                if (fighters.get(i).getName().equals(opponentList.get(choosenOpponent))){
+                    choosenOpponentIndex = i;
+                }
+            }
             
-            if (choosenOpponent >= 0 &&  choosenOpponent <= opponent.size() - 1){
+            if (choosenOpponent >= 0 &&  choosenOpponent <= opponentList.size() - 1){
                 if (fighters.get(playersTurn).getSkillRage() >= 75){
                 char skill;
 
@@ -113,7 +125,7 @@ public class Main {
 
                 int damage1 = BattleUtils.strikeAttack(
                 fighters.get(playersTurn),
-                fighters.get(choosenOpponent),
+                fighters.get(choosenOpponentIndex),
                 fighters.get(playersTurn).getAttackPower(),
                 specialSkill);
 
@@ -121,6 +133,8 @@ public class Main {
             }else {
                 System.out.println("Invalid Attack!");
             }
+
+            System.out.println(playersTurn);
 
             playersTurn++;
         }
